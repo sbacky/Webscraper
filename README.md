@@ -1,6 +1,6 @@
 # Webscraper
 
-The purpuse of this project is to query google and return a count of every word per page on a specified number of resulting pages per query. Arguments are passed from the command line. Does not differentiate bewtween singular and plural versions of words.
+The purpuse of this project is to get a count of every word's occurance on a specified number of pages, determined by a google search. Arguments are passed from the command line. Plural and singular versions of words are treated as different words.
 
 Current Version:
 
