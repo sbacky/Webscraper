@@ -1,6 +1,10 @@
 # Webscraper
 
-The purpuse of this project is to search google with various queries and return an index and count of each word found on a specified number of resulting pages per search query. Arguments are passed from the command line. 
+The purpuse of this project is to query google and return a count of every word per page on a specified number of resulting pages per query. Arguments are passed from the command line. Does not differentiate bewtween singular and plural versions of words.
+
+Current Version:
+
+Displays counts of words in order from most occurrances to least occurances. Prints count of words to the console as a dictionary of tuples containing a string and an index.
 
 | **options** | **help text** |
 |---|---|
@@ -13,6 +17,7 @@ The purpuse of this project is to search google with various queries and return 
 
 * [Setup](#setup)
 * [Methods](#methods)
+* [Releases](#releases)
 
 ## Setup
 
@@ -64,7 +69,7 @@ pip install google
 
 ## Methods
 
-A list of URLs for each search query need to be collected. Each URL then needs to be visited and scraped for its text content. The text content gets processed and every word is indexed and counted. Words will be stripped and converted to lower case because we only care if it is the same word. Plural versions of words are treated as different words.
+A list of URLs for each search query need to be collected. Each URL then needs to be visited and scraped for its text content. The text content gets processed and every word is indexed and counted. Words will be stripped and converted to lower case because we only care if it is the same word.
 
 * get_urls()
 * get_content()
@@ -107,3 +112,17 @@ Args:
 Returns:
     
 * dict[str, int]: an index of every word in content and a count of how many times that word appeared. Does not differentiate on case of word. For example, "word" and "Word" would be considered the same.
+
+## Releases
+
+### Version 1.0.0
+
+Displays counts of words in order from most occurrances to least occurances. Prints count of words to the console as a dictionary of tuples containing a string and an integer.
+
+Uses Search() from googlesearch module to search google with a given query and return a list of URLs. The number of URLs returned is set via num_results parameter on the Search method. This can be set from the Command line by passing the -n or --num-results flag and then an integer greater than 0.
+
+Uses requests module to perform GET requests to each URL in the list of URLs obtained from googlesearch.Search(). Then uses Beautifulsoup4 to parse the HTML and pull all text from the `<body>...</body>`.
+
+Uses collections.Counter() to count each words occurance and place in a dictionary. Also used to modify dictionary by taking away common words and symbols that shouldnt be considered in the final result.
+
+Uses argparse to implement command line arguments for easy CLI use. See table [here](#webscraper)
