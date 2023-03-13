@@ -2,9 +2,22 @@
 
 The purpuse of this project is to get a count of every word's occurance on a specified number of pages, determined by a google search. Arguments are passed from the command line. Plural and singular versions of words are treated as different words.
 
-Current Version:
-
 Displays counts of words in order from most occurrances to least occurances. Prints count of words to the console as a dictionary of tuples containing a string and an index.
+
+Current Version: [0.1.1](#version-011)
+
+## Content
+
+* [Command Line](#command-line)
+* [Setup](#setup)
+* [Methods](#methods)
+* [Releases](#releases)
+    * [0.1.0](#version-010)
+    * [0.1.1](#version-011)
+
+## Command Line
+
+>Has a command line interface. Use below table for available flags and expected parameters
 
 | **options** | **help text** |
 |---|---|
@@ -12,12 +25,7 @@ Displays counts of words in order from most occurrances to least occurances. Pri
 | -q QUERY, --query QUERY | Query string to google search. Use -m or --multi-query to provide a comma separated list of queries. |
 | -m MULTI_QUERY, --multi-query MULTI_QUERY | Comma separated list of queries as a string. |
 | -n NUM_RESULTS, --num-results NUM_RESULTS | Set the number of result pages to process for each query. Default is 5. |
-
-## Content
-
-* [Setup](#setup)
-* [Methods](#methods)
-* [Releases](#releases)
+| -s SEARCH, --search SEARCH | String specifying search type. Can be "b", "m" or "a". Default is "b". |
 
 ## Setup
 
@@ -71,10 +79,20 @@ pip install google
 
 A list of URLs for each search query need to be collected. Each URL then needs to be visited and scraped for its text content. The text content gets processed and every word is indexed and counted. Words will be stripped and converted to lower case because we only care if it is the same word.
 
+* run_argparse()
 * get_urls()
-* get_content()
+* get_soup()
+* get_body()
+* get_meta()
 * processor()
 * main()
+
+### **run_argparse() -> argparse.ArgumentParser**
+
+>Returns parsed arguments passed in from the command line.
+
+Returns:
+* argparse.ArgumentParser: Argument parser for parsing command line arguments in python
 
 ### **get_urls(query: str, num_results: int) -> list[str]**
 
@@ -89,9 +107,9 @@ Returns:
 
 * list[str]: List of top num_results from google by searching query
 
-### **get_content(url: str) -> str**
+### **get_soup(url: str) -> BeautifulSoup**
 
->Takes a url as a string and returns body content of HTMl page as string. Sets User-Agent: Mozilla/5.0 header and timeout=5.
+>Takes a url as a string and returns body content of HTMl page as BeautifulSoup. Sets User-Agent: Mozilla/5.0 header and timeout=5.
 
 Args:
 
@@ -99,7 +117,27 @@ Args:
 
 Returns:
 
-* str: Returns content of page body at URL passed as a string.
+* BeautifulSoup: Returns content of page body at URL passed as a BeautifulSoup object.
+
+### **get_body(soup: BeautifulSoup) -> str**
+
+>Takes a BeautifulSoup object and returns body text of parsed page.
+
+Args:
+* soup (BeautifulSoup): Parsed content of HTML page.
+
+Returns:
+* str: contnet of body text of page as a string.
+
+### **get_meta(soup: BeautifulSoup) -> ResultSet**
+
+>Takes a BeautifulSoup object and returns ResultSet of meta tags from parsed page.
+
+Args:
+* soup (BeautifulSoup): Parsed content of HTMl page
+
+Returns:
+* ResultSet: List wrapper for list of meta tags List[str]
 
 ### **processor(content: str) -> Counter[str]**
 
@@ -115,7 +153,7 @@ Returns:
 
 ## Releases
 
-### Version 1.0.0
+### Version 0.1.0
 
 Displays counts of words in order from most occurrances to least occurances. Prints count of words to the console as a dictionary of tuples containing a string and an integer.
 
@@ -126,3 +164,17 @@ Uses requests module to perform GET requests to each URL in the list of URLs obt
 Uses collections.Counter() to count each words occurance and place in a dictionary. Also used to modify dictionary by taking away common words and symbols that shouldnt be considered in the final result.
 
 Uses argparse to implement command line arguments for easy CLI use. See table [here](#webscraper)
+
+### Version 0.1.1
+
+Added search type to specify whether to search for meta tags or for body text. Default is to search for body text. This is set by the -s or --search flag followed by "b" or "body" for body text, "m" or "meta" for meta tags, or "a" or "all" for both body text and meta tags. Meta tags are returned below the url they are found at and printed in the console.
+
+Added InvalidSearchType Exception raised if the search type is not a valid selection. Search type must be one of the selections described above otherwise this exception will be raised.
+
+Refactored code to separate code handling body text from code handling meta tags. This can be further refactored to take out similar code for handling the urls.
+
+Update main() to use match case for search type. This can match any number of search types and is easily extendible if more search types are added.
+
+### Future Updates
+
+Export results to a specified file instead of to the console. Can be an additional argument to output results to a specified file. Need to check if file path is valid and file and user have appropriate permissions.
