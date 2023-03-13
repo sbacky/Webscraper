@@ -61,13 +61,19 @@ def processor(content: str) -> Counter[str]:
         appeared. Does not differentiate on case of word. For example, "word" and "Word" would be
         considered the same. 
     """
-    common_words = ['a', 'the', 'at', 'for', 'with', 'and', 'to', 'of', 'or', 'if', 'in', 'var', 'none;', 'you', 'your', 'font-weight:', 'padding:', 'margin:', 'can', 'width:']
-    common_symbols = ['&', '@', '!', '=', '\{\}', '}', '{', '//', '0;', '});', '0', '/', ')', '(', '-']
+    common_words = ['a', 'the', 'at', 'for', 'we', 'on', 'us', 'our', 'with', 'and', 'to', '5px', 'of', 'or', 'if', 'in', 'var', 'none;', '0s,', '1px', '2px', '3', '3px', '0.5s', 'you', '3px', 'your', 'can', 'src', '0px', '2']
+    common_symbols = ['&', '@', '!', '=', '}', '{', '0', '/', ')', '(', '-', '+', '=', '<', '>', '1', ':', '*', '#', '@', ';', '–']
     words = Counter(content.lower().split())
     for word in set(common_words):
         del words[word]
-    for symbol in set(common_symbols):
-        del words[symbol]
+
+    keys = words.keys()
+    for word in list(keys):
+        for symbol in set(common_symbols):
+            if symbol in word:
+                del words[word]
+                break
+            
     return words
     
 
