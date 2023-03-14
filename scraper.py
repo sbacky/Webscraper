@@ -23,13 +23,12 @@ def run_argparse() -> argparse.ArgumentParser:
     )
     # Add arguments
     arg_parser.add_argument("-q", "--query", type=str, help="Query string to google search. Use -m or --multi-query to provide a comma separated list of queries.")
-    arg_parser.add_argument("-m", "--multi-query", type=str, help="Comma separated list of queries as a string.")
     arg_parser.add_argument("-n", "--num-results", type=int, help="Set the number of result pages to process for each query. Default is 5.")
     arg_parser.add_argument("-s", "--search", type=str, help="Specify to retrieve index of words from body text or meta tags")
     
     return arg_parser
 
-def get_urls(query: str, num_results: int) -> list[str]:
+def get_urls(queries: list[str], num_results: int) -> list[str]:
     """Google search query and return top 5 resulting URLs as a list of strings. Uses googlesearch.search()
     to search google and return a list of URLs
 
@@ -40,8 +39,11 @@ def get_urls(query: str, num_results: int) -> list[str]:
     Returns:
         list[str]: List of top 5 results from google searching query
     """
-    urls = search(query, num_results=num_results, lang="en")
-    return list(urls)
+    urls: list[str] = []
+    # Get list of urls per search query
+    for query in queries:
+        urls += list(search(query, num_results=num_results, lang="en"))
+    return urls
     
 def get_soup(url: str) -> BeautifulSoup:
     """Takes a url as a string and returns content of HTMl page as BeautiulSoup. Sets
@@ -123,12 +125,8 @@ def processor(content: str) -> Counter[str]:
 def body_main(queries: list[str], num_results: int) -> None:
     # Initiate variables
     word_count: Counter[str] = Counter()
-    urls: list[str] = []
-    # Get list of urls per search query
-    for query in queries:
-        urls += get_urls(query, num_results)
     # Get rid of duplicate URLs
-    url_set = set(urls)
+    url_set = set(get_urls(queries, num_results))
     # Process content from each url
     for url in url_set:
         # Get content from body of html page and return as a string
@@ -141,12 +139,8 @@ def body_main(queries: list[str], num_results: int) -> None:
     print(word_count.most_common(20))
     
 def meta_main(queries: list[str], num_results: int) -> None:
-    urls: list[str] = []
-    # Get list of urls per search query
-    for query in queries:
-        urls += get_urls(query, num_results)
     # Get rid of duplicate URLs
-    url_set = set(urls)
+    url_set = set(get_urls(queries, num_results))
     # Process content from each url
     for url in url_set:
         print(url)
@@ -160,9 +154,7 @@ def meta_main(queries: list[str], num_results: int) -> None:
 def main(queries: list[str], num_results: int, search_type: str) -> None:
     try:
         match search_type:
-            case "":
-                body_main(queries, num_results)
-            case "b" | "body":
+            case "" | "b" | "body":
                 body_main(queries, num_results)
             case "m" | "meta":
                 meta_main(queries, num_results)
@@ -181,12 +173,10 @@ if __name__ == "__main__":
     # Run parser and place extracted data in argparse.Namespace
     args = arg_parser.parse_args()
     # Get query/queries
-    query: list[str]
+    query: list[str] = []
     try:
         if args.query:
             query = args.query.split(",")
-        elif args.multi_query:
-            query = args.multi_query.split(",")
         else:
             raise NoQueryException("No Query was provided. Provide a query using -q or --query and try again. Use -h to see help menu")
     except NoQueryException as e:
