@@ -4,7 +4,7 @@ The purpuse of this project is to get a count of every word's occurance on a spe
 
 Displays counts of words in order from most occurrances to least occurances. Prints count of words to the console as a dictionary of tuples containing a string and an index.
 
-Current Version: [0.1.1](#version-011)
+Current Version: [0.1.2](#version-012)
 
 ## Content
 
@@ -23,7 +23,6 @@ Current Version: [0.1.1](#version-011)
 |---|---|
 | -h, --help | show this help message and exit |
 | -q QUERY, --query QUERY | Query string to google search. Use -m or --multi-query to provide a comma separated list of queries. |
-| -m MULTI_QUERY, --multi-query MULTI_QUERY | Comma separated list of queries as a string. |
 | -n NUM_RESULTS, --num-results NUM_RESULTS | Set the number of result pages to process for each query. Default is 5. |
 | -s SEARCH, --search SEARCH | String specifying search type. Can be "b", "m" or "a". Default is "b". |
 
@@ -174,6 +173,12 @@ Added InvalidSearchType Exception raised if the search type is not a valid selec
 Refactored code to separate code handling body text from code handling meta tags. This can be further refactored to take out similar code for handling the urls.
 
 Update main() to use match case for search type. This can match any number of search types and is easily extendible if more search types are added.
+
+### Version 0.1.2
+
+Removed support for passing in multiple queries at a time -m or --multi-query flag. Was not being used and making core logic more complicated than it had to. This feature might be added back in later down the line, but for now it is no longer needed.
+
+Refactored code to remove duplicate and repeated code and added to another related function. Makes code easier to read and follow
 
 ### Future Updates
 
